@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  BlueTech
 //
-//  Created by Lan on 2024/7/20.
+//  Created by Charlie on 2024/7/20.
 //
 
 import UIKit
@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = ViewController()
+        window.rootViewController = QuoteViewController()
         self.window = window
         window.makeKeyAndVisible()
     }
