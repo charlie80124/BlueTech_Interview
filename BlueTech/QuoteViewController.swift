@@ -21,7 +21,7 @@ class QuoteViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var  priceTextField: UITextField = {
         let tf = UITextField()
-        let lb = UILabel()3
+        let lb = UILabel()
         lb.text = "Price: "
         tf.leftView = lb
         tf.leftViewMode = .always
