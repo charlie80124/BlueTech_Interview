@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-class QuoteViewController: UIViewController {
+class QuoteViewController: UIViewController, UITextFieldDelegate {
     private let viewModel = QuoteViewModel()
     
     private let tableView: UITableView = {
@@ -19,23 +19,25 @@ class QuoteViewController: UIViewController {
         return tv
     }()
     
-    private let priceTextField: UITextField = {
+    private lazy var  priceTextField: UITextField = {
         let tf = UITextField()
-        let lb = UILabel()
+        let lb = UILabel()3
         lb.text = "Price: "
         tf.leftView = lb
         tf.leftViewMode = .always
         tf.keyboardType = .decimalPad
+        tf.delegate = self
         return tf
     }()
     
-    private let amountTextField: UITextField = {
+    private lazy var amountTextField: UITextField = {
         let tf = UITextField()
         let lb = UILabel()
         lb.text = "Amount: "
         tf.leftView = lb
         tf.leftViewMode = .always
         tf.keyboardType = .decimalPad
+        tf.delegate = self
         return tf
     }()
     
@@ -188,9 +190,7 @@ class QuoteViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.total
-            .map{
-                $0 != nil ?  $0?.formattedString : ""
-            }
+            .map{ $0 != nil ?  $0?.formattedString : "" }
             .bind(to: totalTextField.rx.text)
             .disposed(by: disposeBag)
         
@@ -227,16 +227,6 @@ class QuoteViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
-
-//        priceTextField.rx.text.orEmpty
-//            .compactMap { Decimal(string:$0) }
-//            .bind(to: viewModel.inputPrice)
-//            .disposed(by: disposeBag)
-//        
-//        amountTextField.rx.text.orEmpty
-//            .compactMap { Decimal(string:$0) }
-//            .bind(to: viewModel.inputAmount)
-//            .disposed(by: disposeBag)
         
         orderButton.rx.tap
             .subscribe(onNext: { [weak self] in
@@ -245,6 +235,27 @@ class QuoteViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        var result = false
+        if let text = textField.text, let range = Range(range, in:text) {
+            var updateString = text.replacingCharacters(in: range, with: string)
+            
+            //法國鍵盤 => "." = ","
+            updateString = updateString.replacingOccurrences(of: ",", with: ".")
+            let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
+            let characterSet = CharacterSet(charactersIn: updateString)
+            if !allowedCharacters.isSuperset(of: characterSet) {
+                return result
+            }
+            let decimalCount = updateString.components(separatedBy: ".").count-1
+            if decimalCount > 1 {
+                return result
+            }
+            
+            return true
+        }
+        return result
+    }
     
     
     private func showOrderConfirmation() {
