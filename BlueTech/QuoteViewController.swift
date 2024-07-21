@@ -236,7 +236,6 @@ class QuoteViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        var result = false
         if let text = textField.text, let range = Range(range, in:text) {
             var updateString = text.replacingCharacters(in: range, with: string)
             
@@ -245,16 +244,16 @@ class QuoteViewController: UIViewController, UITextFieldDelegate {
             let allowedCharacters = CharacterSet(charactersIn: "0123456789.")
             let characterSet = CharacterSet(charactersIn: updateString)
             if !allowedCharacters.isSuperset(of: characterSet) {
-                return result
+                return false
             }
             let decimalCount = updateString.components(separatedBy: ".").count-1
             if decimalCount > 1 {
-                return result
+                return false
             }
             
             return true
         }
-        return result
+        return false
     }
     
     
